@@ -8,10 +8,14 @@ import androidx.compose.material.*
 import androidx.compose.material.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -22,7 +26,7 @@ import com.example.bodyfatcalculatorjc.Screen
 fun CalculatorTypes(navController: NavController) {
     Surface(modifier = Modifier
         .fillMaxSize()
-        .background(Color.LightGray)) {
+        .background(Color.Gray)) {
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
@@ -40,19 +44,23 @@ fun CalculatorTypes(navController: NavController) {
                     border = BorderStroke(1.dp, Color.Blue),
                     modifier = Modifier
                         .size(180.dp, 180.dp)
-                        .padding(12.dp),
+                        .padding(12.dp)
+                        ,
                 ) {
-                    Text("Simple BFC", fontSize = 22.sp)
+                    Text("Simple BFC", fontSize = 22.sp,textAlign = TextAlign.Center,)
                 }
                 Button(
                     onClick = { navController.navigate(Screen.ProBFC.toString()) },
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue,
-                        contentColor = Color.White),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue, contentColor = Color.White),
                     shape = RoundedCornerShape(20),
                     border = BorderStroke(1.dp, Color.Blue),
+
                     modifier = Modifier
                         .size(180.dp, 180.dp)
-                        .padding(12.dp),
+                        .padding(12.dp)
+                        .align((Alignment.CenterVertically))
+                    ,
+
                 ) {
                     Text("Pro BFC", fontSize = 22.sp)
                 }
