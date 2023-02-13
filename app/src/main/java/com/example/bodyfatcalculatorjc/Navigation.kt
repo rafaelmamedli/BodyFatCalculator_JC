@@ -23,12 +23,4 @@ fun Navigation(){
 
 }
 
-//@Composable
-//fun MainScreen(navController: NavController) {
-//    Column(verticalArrangement = Arrangement.Center,
-//    modifier = Modifier
-//        .fillMaxWidth()
-//        .padding(horizontal = 50.dp)) {
-//
-//    }
-//}
+

@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.bodyfatcalculatorjc.ui.theme.BodyFatCalculatorJCTheme
 import com.example.bodyfatcalculatorjc.view.CalculatorTypes
-import com.example.bodyfatcalculatorjc.view.ProCalculator
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

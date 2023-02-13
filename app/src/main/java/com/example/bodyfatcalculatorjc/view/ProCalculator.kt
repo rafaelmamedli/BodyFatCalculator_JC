@@ -1,21 +1,19 @@
 package com.example.bodyfatcalculatorjc.view
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
+
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
-import com.example.bodyfatcalculatorjc.ui.theme.BodyFatCalculatorJCTheme
+import java.util.*
 import kotlin.math.log10
 
 
@@ -23,117 +21,129 @@ import kotlin.math.log10
 
 
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    BodyFatCalculatorJCTheme {
-        BodyFatCalculator()
-    }
 
-
-}
-
-var btcResult:Double = 0.0
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ProCalculator(navController: NavController? = null) {
-    var isChecked by remember { mutableStateOf(false) }
-    val btcResult = remember { mutableStateOf(0) }
-    val height = remember { mutableStateOf("") }
-    val weight = remember { mutableStateOf("") }
-    val neck = remember { mutableStateOf("") }
-    val abdomen = remember { mutableStateOf("") }
-
-
-    Surface(modifier = Modifier
-        .fillMaxSize()
-        .background(Color.Gray)) {
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-
-            Spacer(modifier = Modifier.padding(6.dp))
-
-            SpecialTextField(string = height.value, hint = "in cm","Height") {
-                height.value = it
-                println(height.value)
-            }
-            Spacer(modifier = Modifier.padding(6.dp))
-            SpecialTextField(string = weight.value,"in kg","Weight") {
-                weight.value = it
-                println(weight.value)
-            }
-            Spacer(modifier = Modifier.padding(6.dp))
-
-            SpecialTextField(string = neck.value,"in cm","Neck") {
-                neck.value = it
-                println(neck.value)
-            }
-            Spacer(modifier = Modifier.padding(6.dp))
-
-            SpecialTextField(string = abdomen.value,"in cm", "Abdomen") {
-                abdomen.value = it
-                println(abdomen.value)
-            }
-            Spacer(modifier = Modifier.padding(6.dp))
-
-            Button(string = "Calculate", abdomenValue = abdomen.value, neckValue = neck.value, heightValue = height.value,btcResult)
-
-            ResultText(resultText = btcResult )
 
 
 
+
+    var weight by remember { mutableStateOf("") }
+    var height by remember { mutableStateOf("") }
+    var neck by remember { mutableStateOf("") }
+    var abdomen by remember { mutableStateOf("") }
+    var bodyFat by remember { mutableStateOf("") }
+    var isMale by remember { mutableStateOf(true) }
+    var hip by remember { mutableStateOf("") }
+
+
+    Column(
+        modifier = Modifier.padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = "Enter your weight in kilograms")
+        OutlinedTextField(
+            value = weight,
+            onValueChange = { weight = it },
+            label = { Text(text = "Weight (kg)") },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(text = "Enter your height in centimeters")
+        OutlinedTextField(
+            value = height,
+            onValueChange = { height = it },
+            label = { Text(text = "Height (cm)") },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(text = "Enter your neck circumference in centimeters")
+        OutlinedTextField(
+            value = neck,
+            onValueChange = { neck = it },
+            label = { Text(text = "Neck circumference (cm)") },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(text = "Enter your abdomen circumference in centimeters")
+        OutlinedTextField(
+            value = abdomen,
+            onValueChange = { abdomen = it },
+            label = { Text(text = "Abdomen circumference (cm)") },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+        )
+
+        Text(text = "Enter your hip (for women)")
+        OutlinedTextField(
+            value = hip,
+            onValueChange = { hip = it },
+            label = { Text(text = "Abdomen circumference (cm)") },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row {
+            Text(text = "Gender:")
+            Spacer(modifier = Modifier.width(8.dp))
+            RadioButton(
+                selected = isMale,
+                onClick = { isMale = true },
+                colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colors.primary)
+            )
+            Text(text = "Male")
+            Spacer(modifier = Modifier.width(16.dp))
+            RadioButton(
+                selected = !isMale,
+                onClick = { isMale = false },
+                colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colors.primary)
+            )
+            Text(text = "Female")
         }
 
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(onClick = {
+            val w = weight.toDoubleOrNull() ?: 0.0
+            val h = height.toDoubleOrNull() ?: 0.0
+            val n = neck.toDoubleOrNull() ?: 0.0
+            val a = abdomen.toDoubleOrNull() ?: 0.0
+            val h2 =hip.toDoubleOrNull() ?: 0.0
+            val bf = if (isMale) {
+                //495 / (1.0324 - 0.19077 * log10(a - n) + 0.15456 * log10(h)) - 450
+                82.3 * log10(a - n ) - 70.041 * log10(h) + 36.76
+            } else {
+                163.205 * log10(a + h2 - n) - 97.684 * log10(h) - 78.38
+            }
+            bodyFat = "${bf.toInt().toString()} %"
+            //mTodoViewModel.addTodo(BodyFat(bodyFat))
+        }) {
+            Text(text = "Calculate body fat percentage")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "Your body fat " + bodyFat ,
+            style = MaterialTheme.typography.h4
+        )
+    }}
+
+class InputViewModel : ViewModel() {
+    private val _todo: MutableLiveData<String> = MutableLiveData("")
+    val todo: LiveData<String> = _todo
+
+    fun onInputChange(newName: String) {
+        _todo.value = newName
     }
 }
 
-@Composable
-fun SpecialTextField(string: String,hint:String,title:String, function: (String) -> Unit) {
 
-    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Text(title, fontSize = 18.sp, modifier = Modifier
-            .fillMaxWidth(0.25f)
-            .padding(start = 12.dp))
-
-        TextField(
-            value = string, onValueChange = function,
-            Modifier.width(230.dp),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number,
-            ),placeholder = { Text(hint) })
-    }
-
-}
-
-@Composable
-fun Button(string: String,abdomenValue:String,neckValue:String,heightValue:String,result0 : MutableState<Int>){
-    androidx.compose.material.Button(
-        onClick = { btcResult =  82.3 * log10((abdomenValue.toDouble() - neckValue.toDouble())) - 70.041 * log10(heightValue.toDouble()) + 36.76
-              result0.value = btcResult.toInt()
-        },
-        colors = ButtonDefaults.buttonColors(
-            backgroundColor = Color.Blue,
-            contentColor = Color.White
-        ),
-        shape = RoundedCornerShape(20),
-        border = BorderStroke(1.dp, Color.Blue),
-        modifier = Modifier
-            .padding(12.dp),
-    ) {
-        Text(string, fontSize = 22.sp)
-    }
-
-
-}
-
-
-
-
-@Composable
-fun ResultText(resultText: MutableState<Int>){
-    Text("Your body fat : ${resultText.value} %", fontSize = 16.sp, modifier = Modifier
-        .fillMaxWidth(0.35f)
-        .padding(top = 12.dp, start = 2.dp))
-
-}
 
