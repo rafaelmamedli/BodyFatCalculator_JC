@@ -26,9 +26,6 @@ import kotlin.math.log10
 @Composable
 fun ProCalculator(navController: NavController? = null) {
 
-
-
-
     var weight by remember { mutableStateOf("") }
     var height by remember { mutableStateOf("") }
     var neck by remember { mutableStateOf("") }
@@ -40,7 +37,9 @@ fun ProCalculator(navController: NavController? = null) {
 
     Column(
         modifier = Modifier.padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+
     ) {
         Text(text = "Enter your weight in kilograms")
         OutlinedTextField(

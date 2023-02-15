@@ -8,9 +8,6 @@ import androidx.compose.material.*
 import androidx.compose.material.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Center
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
-import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -37,7 +34,7 @@ fun CalculatorTypes(navController: NavController) {
             Row(verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,) {
                 Button(
-                    onClick = { /* handle click event */ },
+                    onClick = { navController.navigate(Screen.SimpleBFC.toString()) },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue,
                         contentColor = Color.White),
                     shape = RoundedCornerShape(20),
